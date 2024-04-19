@@ -19,12 +19,13 @@ app.use(bodyParser.json()) //body pasrser for json data
 
 // routes import
 import inventoryRouter from "./routes/inventory.route.js"
+import userRouter from "./routes/user.route.js"
 
 
 // route declaration
-app.use("/api/v1/", inventoryRouter)
+app.use("/api/v1", inventoryRouter)
 
-
+app.use("/api/v1", userRouter)
 
 
 
