@@ -6,11 +6,12 @@ import {
     updateInventoryItem,
     deleteInventoryItem
 } from "../controllers/inventory.controller.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 // Route for creating a new inventory item
-router.route("/").post(createInventoryItem);
+router.route("/").post(verifyJWT, createInventoryItem);
 
 // Route for getting all inventory items
 router.route("/").get(getAllInventoryItems);
@@ -19,9 +20,9 @@ router.route("/").get(getAllInventoryItems);
 router.route('/:id').get(getInventoryItemById);
 
 // Route for updating an inventory item
-router.route('/:id').put(updateInventoryItem);
+router.route('/:id').put(verifyJWT, updateInventoryItem);
 
 // Route for deleting an inventory item
-router.route('/:id').delete(deleteInventoryItem);
+router.route('/:id').delete(verifyJWT, deleteInventoryItem);
 
 export default router;

@@ -1,4 +1,4 @@
-import {User} from "../models/user.model.js"
+import { User } from "../models/user.model.js"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 
@@ -23,7 +23,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
 }
 
 
-
+//signup controller
 const signup = async (req, res) => {
   const { username, email, fullName, password } = req.body;
 
@@ -68,7 +68,7 @@ const signup = async (req, res) => {
   }
 };
 
-
+//login controller
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -87,7 +87,7 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id) // Consider secure storage
+    const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id) // Consider secure storage
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
@@ -95,23 +95,45 @@ const login = async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true
-  }
+    }
 
     res.status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json({
-      message: "Login successful",
-      user: loggedInUser
-    });
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json({
+        message: "Login successful",
+        user: loggedInUser
+      });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
+//logout controller
+const logoutUser = async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.user._id, {
+      $unset: { refreshToken: 1 }, // Remove refresh token
+    }, { new: true });
 
-export { 
+    const options = {
+      httpOnly: true,
+      secure: true
+    }
+
+    return res.status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json({ message: "User logged out successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Logout failed" });
+  }
+};
+
+export {
   signup,
-  login, 
+  login,
+  logoutUser,
 } 

@@ -10,7 +10,7 @@ dotenv.config({
 //initialise port where server runs
 const port = process.env.PORT || 8000;
 
-//DB connection : It is async method retuns promise
+//db connection
 connectDB()
 .then( () => {
     //run or listen the server on specific port
