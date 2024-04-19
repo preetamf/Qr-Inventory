@@ -42,6 +42,10 @@ userSchema.pre("save", async function (next) {
     next()
 }) // .pre middleware used to hash password every time when pasword feild updates or changes before saving in DB
 
+//password validation
+userSchema.methods.isPasswordCorrect = async function(password){
+    return await bcrypt.compare(password, this.password)
+}
 
 //jwt token generation:
 userSchema.methods.generateAccessToken = function () {
